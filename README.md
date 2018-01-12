@@ -4,7 +4,7 @@ php-simple-lint, extends phpcs easily.
 
 ## Usage
 
-php <lint.php> <rule/rule.sample.json> <phpcs>
+php `lint.php` `rule/rule.sample.json` `phpcs`
 
 > php lint.php rule/rule.sample.json vendor/bin/phpcs
 
@@ -135,6 +135,4 @@ Matched result
     "reason": "function must camel"
   }
 ]
-
-```
-
+````
