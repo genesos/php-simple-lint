@@ -17,8 +17,8 @@ class ABC extends A implements B, C
 {
   const THE_CONST=1;
   public $property=1;
-  public function someNethod($a, $b){
-    $property = 2;
+  public function someMethod($a, $b){
+    $var = 2;
   }
 }
 ```
@@ -33,7 +33,7 @@ Serialize to
 ['type' => 'param', 'clause' => 'namespace N class ABC extends A implements B implements C { public function someMethod ( int $a'],
 ['type' => 'param', 'clause' => 'namespace N class ABC extends A implements B implements C { public function someMethod ( bool $b'],
 ['type' => 'function', 'clause' => 'namespace N class ABC extends A implements B implements C { public function someMethod ( )'],
-['type' => 'var', 'clause' => 'namespace N function someMethod ( ) { $property'],
+['type' => 'var', 'clause' => 'namespace N function someMethod ( ) { $var'],
 ```
 
 Match with

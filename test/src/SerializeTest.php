@@ -185,13 +185,13 @@ class SerializeTest extends TestCase
 
     public function testSerializeVar4()
     {
-        $src = 'namespace N;class ABC {public function m(int $a, bool $b):int{$prop = 2;}}';
+        $src = 'namespace N;class ABC {public function m(int $a, bool $b):int{$var = 2;}}';
         $dest = [
             ['type' => 'class', 'clause' => 'namespace N class ABC'],
             ['type' => 'param', 'clause' => 'namespace N class ABC { public function m ( int $a'],
             ['type' => 'param', 'clause' => 'namespace N class ABC { public function m ( bool $b'],
             ['type' => 'function', 'clause' => 'namespace N class ABC { public function m ( ) :int'],
-            ['type' => 'var', 'clause' => 'function m ( ) :int { $prop'],
+            ['type' => 'var', 'clause' => 'function m ( ) :int { $var'],
         ];
         $this->assertStringToEntities($src, $dest);
     }
