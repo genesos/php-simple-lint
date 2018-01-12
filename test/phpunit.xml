@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit bootstrap="bootstrap.php"
+         colors="true"
+         stderr="true"
+        >
+    <testsuites>
+        <testsuite name="Test Suite">
+            <directory>./src/</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <const name="PHPUNIT" value="true"/>
+    </php>
+
+    <groups>
+        <exclude>
+            <group>ignore</group>
+        </exclude>
+    </groups>
+
+</phpunit>

@@ -1,0 +1,33 @@
+[
+  {
+    "type": "class",
+    "must": "class [\\w]+Model",
+    "if": "extends\\s+PlatformBaseModel",
+    "reason": "Extends PlatformBaseModel must postfix Model"
+  },
+  {
+    "type": "var",
+    "must": "\\$[a-z0-9_]+",
+    "reason": "var must lowercase with underbar"
+  },
+  {
+    "type": "param",
+    "must": "\\$[a-z0-9_]+",
+    "reason": "param must lowercase with underbar"
+  },
+  {
+    "type": "const",
+    "must": "[A-Z0-9_]+",
+    "reason": "const must camel cap"
+  },
+  {
+    "type": "class",
+    "must": "class [A-Z][a-zA-Z0-9]+",
+    "reason": "class must camel cap"
+  },
+  {
+    "type": "function",
+    "must": "function [a-z][a-zA-Z0-9]+",
+    "reason": "function must camel"
+  }
+]

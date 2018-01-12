@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+use SimpleLint\Lint;
+use SimpleLint\LintPhpcsProxy;
+
+foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
+    if (file_exists($file)) {
+        require_once $file;
+        break;
+    }
+}
+
+$command_args = $argv;
+$php_bin = $_SERVER['PHP_PEAR_PHP_BIN'];
+$php_bin = $php_bin ?? 'php';
+$lint_bin_php = array_shift($command_args);
+$lint_rule_file = array_shift($command_args);
+$php_cs = array_shift($command_args);
+
+if ($php_cs === null) {
+    die('run : php-simple-lint {rule.json} {phpcs}' . PHP_EOL);
+}
+
+$phpcs_xml = LintPhpcsProxy::run($php_bin, $php_cs, $command_args);
+$simple_lint_xml = null;
+try {
+    $simple_lint_xml = Lint::run($lint_rule_file, $command_args);
+} catch (Exception $e) {
+    echo((string)$e);
+}
+echo Lint::mergeResult($phpcs_xml, $simple_lint_xml);
