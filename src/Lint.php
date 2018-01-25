@@ -40,13 +40,16 @@ class Lint
         $is_error |= ($report_type !== '--report=xml');
         $is_error |= (count($remain_command_args) > 0);
         if ($is_error) {
+            if ($php_file === '-i') {
+                return '';
+            }
             if ($php_file === '--version') {
                 return '';
             }
             if ($rule_file === null) {
                 return '';
             }
-            throw new \InvalidArgumentException('invalid argument (only support PHPSTORM)');
+            throw new \InvalidArgumentException('invalid argument (only support PHPSTORM single file inspection request)');
         }
 
         $php_string = file_get_contents($php_file);
@@ -78,11 +81,19 @@ class Lint
      */
     public static function mergeResult($phpcs_xml, $simple_lint_xml)
     {
-        if ($simple_lint_xml === null) {
+        $simple_lint_xml = (string)$simple_lint_xml;
+        if ($simple_lint_xml === '') {
             return $phpcs_xml;
         }
+        if (strpos($phpcs_xml, '</file>') !== false) {
+            return str_replace('</file>', $simple_lint_xml . PHP_EOL . '</file>', $phpcs_xml);
+        }
 
-        return str_replace('</file>', $simple_lint_xml . PHP_EOL . '</file>', $phpcs_xml);
+        return str_replace(
+            '</phpcs>',
+            '<file name="X" errors="1" warnings="0" fixable="0">' . PHP_EOL . $simple_lint_xml . PHP_EOL . '</file>' . PHP_EOL . '</phpcs>',
+            $phpcs_xml
+        );
     }
 
     /**
@@ -180,7 +191,7 @@ class Lint
             }
             if (\is_array($ifs)) {
                 foreach ($ifs as $if) {
-                    if (!preg_match('/(^|\s)' . $if . '($|\s)/', $clause)) {
+                    if (!preg_match('/(?:^|\s)' . $if . '(?:$|\s)/', $clause)) {
                         return null;
                     }
                 }
@@ -192,7 +203,7 @@ class Lint
             }
             if (\is_array($if_nots)) {
                 foreach ($if_nots as $if_not) {
-                    if (preg_match('/(^|\s)' . $if_not . '($|\s)/', $clause)) {
+                    if (preg_match('/(?:^|\s)' . $if_not . '(?:$|\s)/', $clause)) {
                         return null;
                     }
                 }
@@ -200,14 +211,14 @@ class Lint
 
             $must = $rule['must'];
             if (\is_string($must)) {
-                if (!preg_match('/(^|\s)' . $must . '($|\s)/', $clause)) {
+                if (!preg_match('/(?:^|\s)' . $must . '(?:$|\s)/', $clause)) {
                     return $rule['reason'];
                 }
             }
 
             $must_not = $rule['must not'];
             if (\is_string($must_not)) {
-                if (preg_match('/' . $must_not . '($|\s)/', $clause)) {
+                if (preg_match('/' . $must_not . '(?:$|\s)/', $clause)) {
                     return $rule['reason'];
                 }
             }
