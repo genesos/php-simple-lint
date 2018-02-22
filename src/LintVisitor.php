@@ -198,7 +198,8 @@ class LintVisitor extends NodeVisitorAbstract
         $this->pushStack(implode(' ', $clauses));
         foreach ($stmt->params as $param) {
             if ($param->type) {
-                $type = (string)$param->type . ' ';
+                $type_hint = $this->parseTypeHint($param->type);
+                $type = $type_hint . ' ';
             } else {
                 $type = '';
             }
@@ -208,7 +209,7 @@ class LintVisitor extends NodeVisitorAbstract
         $clauses = [];
         $clauses[] = ')';
         if ($stmt->returnType) {
-            $return_type = ':' . $this->parseReturnType($stmt->returnType);
+            $return_type = ':' . $this->parseTypeHint($stmt->returnType);
             $clauses[] = $return_type;
         }
 
@@ -229,7 +230,7 @@ class LintVisitor extends NodeVisitorAbstract
         $clauses[] = '(';
         $clauses[] = ')';
         if ($stmt->returnType) {
-            $return_type = ':' . $this->parseReturnType($stmt->returnType);
+            $return_type = ':' . $this->parseTypeHint($stmt->returnType);
             $clauses[] = ':' . $return_type;
         }
         $clauses[] = '{';
@@ -252,21 +253,21 @@ class LintVisitor extends NodeVisitorAbstract
         return $this->serialized_entities;
     }
 
-    private function parseReturnType($return_type)
+    private function parseTypeHint($type_hint)
     {
-        $parsed_return_type = '';
-        if ($return_type instanceof NullableType) {
-            $parsed_return_type = '?';
-            $types = $return_type->getSubNodeNames();
+        $parsed_type_hint = '';
+        if ($type_hint instanceof NullableType) {
+            $parsed_type_hint = '?';
+            $types = $type_hint->getSubNodeNames();
             if (is_array($types)) {
-                $parsed_return_type .= reset($types);
+                $parsed_type_hint .= reset($types);
             } else {
-                $parsed_return_type .= $types;
+                $parsed_type_hint .= $types;
             }
         } else {
-            $parsed_return_type = (string)$return_type;
+            $parsed_type_hint = (string)$type_hint;
         }
 
-        return $parsed_return_type;
+        return $parsed_type_hint;
     }
 }
