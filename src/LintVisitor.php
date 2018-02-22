@@ -5,6 +5,7 @@ namespace SimpleLint;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Name;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassConst;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -207,7 +208,8 @@ class LintVisitor extends NodeVisitorAbstract
         $clauses = [];
         $clauses[] = ')';
         if ($stmt->returnType) {
-            $clauses[] = ':' . (string)$stmt->returnType;
+            $return_type = ':' . $this->parseReturnType($stmt->returnType);
+            $clauses[] = $return_type;
         }
 
         $this->pushStack(implode(' ', $clauses));
@@ -227,7 +229,8 @@ class LintVisitor extends NodeVisitorAbstract
         $clauses[] = '(';
         $clauses[] = ')';
         if ($stmt->returnType) {
-            $clauses[] = ':' . (string)$stmt->returnType;
+            $return_type = ':' . $this->parseReturnType($stmt->returnType);
+            $clauses[] = ':' . $return_type;
         }
         $clauses[] = '{';
 
@@ -247,5 +250,23 @@ class LintVisitor extends NodeVisitorAbstract
     public function getSerializedEntities()
     {
         return $this->serialized_entities;
+    }
+
+    private function parseReturnType($return_type)
+    {
+        $parsed_return_type = '';
+        if ($return_type instanceof NullableType) {
+            $parsed_return_type = '?';
+            $types = $return_type->getSubNodeNames();
+            if (is_array($types)) {
+                $parsed_return_type .= reset($types);
+            } else {
+                $parsed_return_type .= $types;
+            }
+        } else {
+            $parsed_return_type = (string)$return_type;
+        }
+
+        return $parsed_return_type;
     }
 }
